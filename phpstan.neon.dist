@@ -1,0 +1,7 @@
+parameters:
+    level: 0
+    paths:
+        - src
+    doctrine:
+        objectManagerLoader: tools/phpstan/doctrine-orm-bootstrap.php
+    checkGenericClassInNonGenericObjectType: false 
