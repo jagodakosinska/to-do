@@ -22,4 +22,14 @@ class TaskController extends AbstractController
     {
         return new JsonResponse($task->toArray());
     }
+
+    #[Route('/{task}/complete', methods: ['PUT'], name: 'complete')]
+    public function complete(Task $task): Response
+    {
+        $task->setCompleted(true);
+        $this->taskRepository->save($task, true);
+
+        return new JsonResponse($task->toArray());
+    }
+
 }
