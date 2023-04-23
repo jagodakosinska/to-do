@@ -40,5 +40,11 @@ class ProjectController extends AbstractController
 
         return new JsonResponse(['id' => $project->getId()]);
     }
+    
+    #[Route('/{project}', methods: ['GET'], name: 'show')]
+    public function show(Project $project): Response
+    {
+        return new JsonResponse($project->toArray(attachTasks: true));
+    }
 
 }
