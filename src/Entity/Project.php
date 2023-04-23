@@ -76,5 +76,20 @@ class Project
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(bool $attachTasks = false): array
+    {
+        $result = [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+        ];
+        if ($attachTasks) {
+            $result['tasks'] = array_map(fn ($item) => $item->toArray(), $this->getTasks()->toArray());
+        }
+
+        return $result;
+    }
 
 }

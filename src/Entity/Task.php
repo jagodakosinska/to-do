@@ -97,5 +97,20 @@ class Task
 
         return $this;
     }
+    
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'description' => $this->getDescription(),
+            'status' => $this->isCompleted() ? self::STATUS_COMPLETED : self::STATUS_IN_PROGRESS,
+            'project' => $this->getProject()->getId(),
+            'manDay' => $this->getManDay(),
+            'dueDate' => $this->getDueDate()->format('Y-m-d'),
+        ];
+    }
 
 }
