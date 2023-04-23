@@ -28,4 +28,17 @@ class ProjectController extends AbstractController
         return new JsonResponse($projects);
     }
 
+    #[Route('/', methods: ['POST'], name: 'create')]
+    public function create(Request $request): Response
+    {
+        $request = $request->toArray();
+        $title = $request['title'] ?? 'empty title';
+        $project = new Project();
+        $project->setTitle($title);
+
+        $this->projectRepository->save($project, true);
+
+        return new JsonResponse(['id' => $project->getId()]);
+    }
+
 }
