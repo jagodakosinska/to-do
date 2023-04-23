@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/project', name: 'project-')]
 class ProjectController extends AbstractController
 {
-    public function __construct(private ProjectRepository $projectRepository)
+    public function __construct(private ProjectRepository $projectRepository, private TaskRepository $taskRepository)
     {
     }
 
@@ -40,11 +40,36 @@ class ProjectController extends AbstractController
 
         return new JsonResponse(['id' => $project->getId()]);
     }
-    
+
     #[Route('/{project}', methods: ['GET'], name: 'show')]
     public function show(Project $project): Response
     {
         return new JsonResponse($project->toArray(attachTasks: true));
     }
 
+    #[Route('/{project}/task', methods: ['POST'], name: 'create-task')]
+    public function createTask(Request $request, Project $project): Response
+    {
+        $request = $request->toArray();
+        $description = $request['description'] ?? 'empty description';
+        $dueDate = null;
+        if (isset($request['dueDate'])) {
+            $dueDate = \DateTime::createFromFormat('Y-m-d', $request['dueDate']);
+            if (false == $dueDate) {
+                $dueDate = null;
+            }
+        }
+        $manDay = isset($request['manDay']) && is_numeric($request['manDay']) ? $request['manDay'] : null;
+
+        $task = new Task();
+        $task->setProject($project)
+            ->setDescription($description)
+            ->setDueDate($dueDate)
+            ->setManDay($manDay);
+
+        $this->taskRepository->save($task, true);
+
+        return new JsonResponse(['id' => $task->getId()]);
+    }
+    
 }
