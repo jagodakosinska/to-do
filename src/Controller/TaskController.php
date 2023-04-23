@@ -32,4 +32,24 @@ class TaskController extends AbstractController
         return new JsonResponse($task->toArray());
     }
 
+    #[Route('/dueDate', methods: ['POST'], name: 'list-date')]
+    public function getForDate(Request $request): Response
+    {
+        $request = $request->toArray();
+        if (!isset($request['dueDate'])) {
+            return new JsonResponse(['error' => 'Missing due date', Response::HTTP_BAD_REQUEST]);
+        }
+
+        $dueDate = \DateTime::createFromFormat('Y-m-d', $request['dueDate']);
+        if (false == $dueDate) {
+            $dueDate = new \DateTime();
+        }
+
+        $list = $this->taskRepository->findBy(['dueDate' => $dueDate]);
+        $list = array_map(fn ($item) => $item->toArray(), $list);
+
+        return new JsonResponse(['tasks' => $list]);
+    }
+
 }
+
