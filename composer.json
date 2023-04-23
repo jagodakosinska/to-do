@@ -76,6 +76,13 @@
         ],
         "check-stan": [
             "vendor/bin/phpstan analyse --memory-limit 1G"
+        ],
+        "init-project": [
+            "symfony console doctrine:database:create",
+            "symfony console doctrine:migrations:migrate"
+        ],
+        "load-fixtures": [
+            "symfony console doctrine:fixtures:load"
         ]
     },
     "conflict": {
