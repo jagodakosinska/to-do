@@ -33,6 +33,8 @@ services:
       PHP_IDE_CONFIG: serverName=docker
     volumes:
       - .:/app
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - nginx-php-postgres
 
