@@ -4,8 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Project;
 use App\Entity\Task;
-use App\Repository\ProjectRepository;
-use App\Repository\TaskRepository;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,28 +12,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/project', name: 'project-')]
 class ProjectController extends AbstractController
 {
-    public function __construct(private ProjectRepository $projectRepository, private TaskRepository $taskRepository, private EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
     }
 
     #[Route('/', methods: ['GET'], name: 'list')]
     public function list(): Response
     {
-
-        $projects = $this->projectRepository->getList();
-
-        // another approaches
-        // $sql = "select p.id, title, count(*) from project p inner join task t on p.id=t.project_id group by p.id, title order by p.id";
-        // $data = $this->entityManager->getConnection()->executeQuery($sql)->fetchAllAssociative();
-
-        // $dql = "SELECT p.id, p.title FROM \App\Entity\Project p ";
-        // $data2 = $this->entityManager->createQuery($dql)->getArrayResult();
-
-        // $projects = $this->projectRepository->findAll();
-        // $projects = array_map(fn ($item) => $item->toArray(), $projects);
+        $projects = $this->entityManager->getRepository(Project::class)->getList();
 
         return new JsonResponse($projects);
     }
@@ -44,11 +32,9 @@ class ProjectController extends AbstractController
     public function create(Request $request): Response
     {
         $request = $request->toArray();
-        $title = $request['title'] ?? 'empty title';
         $project = new Project();
-        $project->setTitle($title);
-
-        $this->projectRepository->save($project, true);
+        $project->setTitle($request['title']);
+        $this->entityManager->getRepository(Project::class)->save($project, true);
 
         return new JsonResponse(['id' => $project->getId()]);
     }
@@ -79,9 +65,9 @@ class ProjectController extends AbstractController
             ->setDueDate($dueDate)
             ->setManDay($manDay);
 
-        $this->taskRepository->save($task, true);
+        $this->entityManager->getRepository(Task::class)->save($task, true);
 
         return new JsonResponse(['id' => $task->getId()]);
     }
-    
+
 }
