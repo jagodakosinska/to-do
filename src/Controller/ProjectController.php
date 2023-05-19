@@ -31,12 +31,10 @@ class ProjectController extends BaseController
     public function create(Request $request): Response
     {
         $projectDto = ProjectDTO::fromRequest($request);
-   if(!$this->isValid($projectDto)){
-       return $this->invalidResponse();
-   }
-        $request = $request->toArray();
-        $project = new Project();
-        $project->setTitle($request['title']);
+        if (!$this->isValid($projectDto)) {
+            return $this->invalidResponse();
+        }
+        $project = Project::fromDTO($projectDto);
         $this->entityManager->getRepository(Project::class)->save($project, true);
 
         return new JsonResponse(['id' => $project->getId()]);
