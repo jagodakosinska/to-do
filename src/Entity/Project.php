@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\DTO\ProjectDTO;
 use App\Repository\ProjectRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -86,10 +87,16 @@ class Project
             'title' => $this->getTitle(),
         ];
         if ($attachTasks) {
-            $result['tasks'] = array_map(fn ($item) => $item->toArray(), $this->getTasks()->toArray());
+            $result['tasks'] = array_map(fn($item) => $item->toArray(), $this->getTasks()->toArray());
         }
 
         return $result;
+    }
+
+    public static function fromDTO(ProjectDTO $dto): self
+    {
+        return (new self())
+            ->setTitle($dto->getTitle());
     }
 
 }
