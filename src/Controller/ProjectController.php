@@ -2,23 +2,22 @@
 
 namespace App\Controller;
 
+use App\DTO\ProjectDTO;
 use App\Entity\Project;
 use App\Entity\Task;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('/project', name: 'project-')]
-class ProjectController extends AbstractController
+class ProjectController extends BaseController
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
-    }
+
 
     #[Route('/', methods: ['GET'], name: 'list')]
     public function list(): Response
@@ -31,6 +30,10 @@ class ProjectController extends AbstractController
     #[Route('/', methods: ['POST'], name: 'create')]
     public function create(Request $request): Response
     {
+        $projectDto = ProjectDTO::fromRequest($request);
+   if(!$this->isValid($projectDto)){
+       return $this->invalidResponse();
+   }
         $request = $request->toArray();
         $project = new Project();
         $project->setTitle($request['title']);
