@@ -13,6 +13,22 @@ class ProjectDTO
     #[Type('string')]
     private $title;
 
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
     public static function fromRequest(Request $request): self
     {
         $project = new self();
