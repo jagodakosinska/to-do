@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Project;
 use App\Entity\Task;
+use App\Request\ProjectRequest;
 use Doctrine\Common\Annotations\Annotation\Enum;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,11 +30,12 @@ class ProjectController extends AbstractController
     }
 
     #[Route('/', methods: ['POST'], name: 'create')]
-    public function create(Request $request): Response
+    public function create(ProjectRequest $request): Response
     {
-        $request = $request->toArray();
+
+//        $request = $request->toArray();
         $project = new Project();
-        $project->setTitle($request['title']);
+        $project->setTitle($request->title);
         $this->entityManager->getRepository(Project::class)->save($project, true);
 
         return new JsonResponse(['id' => $project->getId()]);
